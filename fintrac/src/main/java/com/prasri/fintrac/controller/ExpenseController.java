@@ -1,20 +1,34 @@
 package com.prasri.fintrac.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.prasri.fintrac.model.Expense;
+import com.prasri.fintrac.repository.ExpenseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ExpenseController {
+    @Autowired
+    private ExpenseRepository expenseRepository;
 
     @PostMapping("/expense")
-    public Long addExpense() {
-        return 1L;
+    public Long addExpense(@RequestBody Expense expense) {
+        return expenseRepository.save(expense).getId();
     }
 
     @GetMapping("/expense/{id}")
-    public Long getExpense() {
-        return 1L;
+    public Expense getExpense(@PathVariable Long id) {
+        return expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Something went wrong!!"));
+    }
+    @DeleteMapping("/expense/{id}")
+    public String deleteExpense(@PathVariable Long id) {
+        expenseRepository.deleteById(id);
+        return "Expense with id : " + id + " is deleted successfully!!!";
+    }
+    @GetMapping("/expense")
+    public List<Expense> getAll() {
+        return expenseRepository.findAll();
     }
 
 }
